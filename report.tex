@@ -1,0 +1,125 @@
+\documentclass[12pt]{article}
+\usepackage[english]{babel}
+\usepackage{lipsum}
+\usepackage[square, numbers]{natbib}
+\bibliographystyle{plainurl}
+\usepackage{url}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{mathtools,siunitx}
+\sisetup{detect-all}
+\usepackage{graphicx}
+\graphicspath{{images/}}
+\usepackage{parskip}
+\usepackage{fancyhdr}
+\usepackage{vmargin}
+\usepackage{hyperref}
+\usepackage{todonotes}
+\usepackage{textcomp}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{listings}
+
+
+\usepackage{color} %red, green, blue, yellow, cyan, magenta, black, white
+\definecolor{mygreen}{RGB}{28,172,0} % color values Red, Green, Blue
+\definecolor{mylilas}{RGB}{170,55,241}
+\setmarginsrb{2 cm}{2.5 cm}{2 cm}{2.5 cm}{1 cm}{1 cm}{1 cm}{1 cm}
+\presetkeys{todonotes}{fancyline}{}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%% TITLE %%%%%%%%%%%%%%%%%%%
+\title{Signal Estimation}
+\author{A. Scharf}	
+\date{\today}
+
+\makeatletter
+\let\thetitle\@title
+\let\theauthor\@author
+\let\thedate\@date
+
+\providecommand\add@text{}
+\newcommand\tagaddtext[1]{%
+  \gdef\add@text{#1\gdef\add@text{}}}% 
+\renewcommand\tagform@[1]{%
+  \maketag@@@{\llap{\add@text\quad}(\ignorespaces#1\unskip\@@italiccorr)}%
+}
+\makeatother
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\theauthor}
+\lhead{\thetitle}
+\cfoot{\thepage}
+
+%% Uncomment the following line if subsections shall be numbered with alphabetic characters instead of numbers!
+%\renewcommand{\thesubsection}{\thesection.\alph{subsection}}
+
+
+
+\begin{document}
+
+\lstset{language=Matlab,%
+    %basicstyle=\color{red},
+    breaklines=true,%
+    morekeywords={matlab2tikz},
+    keywordstyle=\color{blue},%
+    morekeywords=[2]{1}, keywordstyle=[2]{\color{black}},
+    identifierstyle=\color{black},%
+    stringstyle=\color{mylilas},
+    commentstyle=\color{mygreen},%
+    showstringspaces=false,%without this there will be a symbol in the places where there is a space
+    numbers=left,%
+    numberstyle={\tiny \color{black}},% size of the numbers
+    numbersep=9pt, % this defines how far the numbers are from the text
+    emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasise
+    %emph=[2]{word1,word2}, emphstyle=[2]{style},
+}
+
+%%%%%%%%%%%%%%%%%%%% Titlepage start %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{titlepage}
+	\centering
+    \vspace*{0.5 cm}
+    \includegraphics[scale = 0.15]{images/upslogo}\\[1.0 cm]
+
+	\textsc{\Large M2 - TSI}\\[0.5 cm]
+
+	\textsc{\large UE31 Laboratory Report}\\[0.5 cm]	
+	\vspace{1cm}
+	\rule{\linewidth}{0.2 mm} \\[0.4 cm]
+	{ \huge \bfseries \thetitle}\\
+	\rule{\linewidth}{0.2 mm}
+	\\[0.5cm]
+		\textsc{}
+		\\[2.5 cm]
+
+	\vspace{1cm}
+	\emph{Author:}\\
+	Arthur Scharf
+	\vspace{2cm}
+	
+	{\large \today }\\[2 cm]
+ 
+	\vfill
+	
+\end{titlepage}
+%%%%%%%%%%%%%%%%%%% Titlepage end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%% include content %%%%%%%%%%%%%
+\include{content}
+
+% if appendix needed, uncomment the following lines
+\include{appendix}
+
+% if bibliography needed, uncomment the following lines
+%\bibliographystyle{plainnat}
+%\bibliography{biblist}
+
+%%%%%%%%%%%%%%%%% include content end %%%%%%%%%
+\end{document}
