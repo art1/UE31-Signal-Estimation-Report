@@ -31,11 +31,31 @@ This leads to the following equation modelling the data
 
 with $a$ as the amplitude of the galaxy, $s$ the amplitude of the sky's background and $n(l,c)$ as noise.
 
+By assuming a white Gaussian noise with the known variance $\sigma_n^2$ and using the given Sersic-function (see Appendix \todo{add ref here}) we can create a "initial image" that will be used as the initial data set as previously mentioned, see figure \ref{img:initial}.
+\begin{figure}[!h]
+	\centering
+	\includegraphics{images/galaxy_initial}s
+	\label{img:initial}
+	\caption{Initial Data Set, with a artificial elliptic galaxy}
+\end{figure}
+
+The parameters used to create fig. \ref{img:initial} are given below.
+
+\begin{equation}
+	\centering
+	\begin{align*}
+		L, C & = 30px & l_0, c_0 & = 15 & \sigma_l & = 10 & \sigma_c & = 5 \\
+		\alpha & = 0.3 & n & = 0.4 & a & = 10 & s & = 3 
+	\end{align*}
+\end{equation}
+
+with $L,C$ as height respectively width of image in pixels, $l_0, c_0$ the galaxy's centre in pixel coordinates and $\sigma_l, \sigma_c$ as length parameters.
+\todo{probalby don't need this explananation here, see above text}
 
 
 %%%%%%%%%%%%%%%%% TASK 1 %%%
 \section{Estimation with known Galaxy's location and shape parameters}
-
+Having successfully modelled a simple elliptic galaxy
 
 
 
