@@ -87,12 +87,12 @@ Thus, $\boldsymbol{H}$ is a $2\times (L\cdot C)$ matrix, describing the intensit
 \end{equation}
 where $d$ is a vector with $L\cdot C$ elements.\\
 \newline
-In order the obtain maximum likelyhood estimator for $\boldsymbol{\theta}$ as a function of $\boldsymbol{d}$, one has to calculate:
+In order the obtain maximum likelihood estimator for $\boldsymbol{\theta}$ as a function of $\boldsymbol{d}$, one has to calculate:
 \begin{equation}
 \boldsymbol{\theta}=\left(\boldsymbol{H'H}\right)^{-1}\cdot\boldsymbol{H}\cdot\boldsymbol{d}
 \end{equation}
-
-The used matlab code performing this is shown in the appendix. The resulting maximum likelyhood estimators for the galaxy's and the sky background's amplitudes are:
+The bias of that estimator could be calculated using $b_{\boldsymbol{\theta}}(\boldsymbol{\theta}_{init})=E_{Y|\boldsymbol{\theta}_{init}}(\boldsymbol{\theta})-\boldsymbol{\theta}_{init}$, where $\boldsymbol{\theta}_{init}$ is the vector of the true parameters that we want to find out. However, this bias is only applicable for a larger sets of simulations.
+The used matlab code performing this is shown in the appendix. The resulting maximum likelihood estimators for the galaxy's and the sky background's amplitudes are:
 \begin{equation*}
 \boldsymbol{\theta}=\left[2.9576\;10.0131 \right]^{\mathrm{T}}
 \end{equation*}
@@ -100,9 +100,22 @@ This result is very close to the original parameters used for the simulation of 
 
 %%%%%%%%%%%%%%%%% TASK 2 %%%
 \section{Maximum likelihood estimation of all parameters}
+In the next step, we assumed that the galaxy's position and shape are unknown for the fit. Thus, now also the parameter vector $\boldsymbol{\nu}=\left[l_{0},c_{0}, \sigma_{l}, \sigma_{c},n\right]$ also needs to be fitted simultaniously to $\theta$. Again, the corresponding model can be formulated as:
+\begin{equation*}
+\boldsymbol{d}=\boldsymbol{H}(\boldsymbol{\nu})\boldsymbol{\theta}+\boldsymbol{n}(c,l),
+\end{equation*}
+The only difference now is that $\boldsymbol{H}$ depends on the variable $\boldsymbol{\nu}$. Again, $\boldsymbol{H}$ is a $2\times(\L\cdot C)$ - matrix, $\theta=\left[s,a\right]^{\mathrm{T}}$, $\boldsymbol{d}$ a vector with $L\cdot C$ components and $\$\boldsymbol{\nu}$ as defined above a vector with six components. The goal is to obtain the maximum likelihood estimator by minimizing the quadratic cost function $\boldsymbol{J}$:
 
+\begin{equation}
+\boldsymbol{J}(\boldsymbol{\theta,\nu})=\left(\boldsymbol{d}-\boldsymbol{H}(\boldsymbol{\nu})\boldsymbol{\theta}\right)^{\mathrm{T}}\left(\boldsymbol{d}-\boldsymbol{H}(\boldsymbol{\nu})\boldsymbol{\theta}\right)
+\label{eq:costfunction}
+\end{equation}
+The optimization problem thus is a least square optimization. The maximum likelihood estimators are then given by:
+\begin{equation*}
+\left(\boldsymbol{\theta}_{ML},\boldsymbol{\nu}_{ML}\right)=argmin\left(\boldsymbol{J}\right)
+\end{equation*}
 
-
+For a large number of samples, this maximum likelihood estimator is unbiased with a variance equal to the inverse of the Fisher matrix: $\boldsymbol{\sigma}^{2}=\boldsymbol{F}(\boldsymbol{\theta})^{-1}$
 
 %%%%%% arty part form here
 
