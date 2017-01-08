@@ -58,13 +58,11 @@ The parameters used to create above mentioned figure are given as follows
 
 
 	\begin{align*}
-		L, C & = 30px & l_0, c_0 & = 15 & \sigma_l & = 10 & \sigma_c & = 5 \\
-		\alpha & = 0.3 & n & = 0.4 & a & = 10 & s & = 3 
+		L, C & = 30 & l_0, c_0 & = 15 & \sigma_l & = 10 & \sigma_c & = 5 & \sigma_n & = 0.8 \\
+		\alpha & = 0.3 & n & = 0.5 & a & = 10 & s & = 3 
 	\end{align*}
 
-with $L,C$ as height respectively width of image in pixels, $l_0, c_0$ the galaxy's centre in pixel coordinates and $\sigma_l, \sigma_c$ as length parameters.
-\todo{probalby don't need this explananation here, see above text}
-
+with $L,C$ as height respectively width of image in pixels and $\sigma_n$ as the standard deviation of the gaussian white noise.
 
 
 
@@ -119,26 +117,84 @@ For a large number of samples, this maximum likelihood estimator is unbiased wit
 
 %%%%%% arty part form here
 
+The simplest method to gain initial parameters for the optimisation is to perform an "educated guess" \todo{phrasing} using the obtained noisy image from the galaxy. More specifically, the galaxy's centre and the amplitude of the galaxy as well as the background noise can be read straight from the image within a reasonable error-range. However, the shape and form of the galaxy can not be read out or estimated directly since the present noise can not be estimated with a reasonable accuracy. Thus we use arbitrary values for the shape parameters.\\
+These initial parameters can then be used to compute a cost function, c.f. \cref{Appendix C}, which then can be minimised to obtain an optimal set of parameters based on the initial ones. Re-inserting the former into the Sersic model, we can generate an estimation of the true galaxy (c.f. \cref{fig:initial}), as can be seen in \cref{fig:MLE}.
+
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{ l | c c c c c c c c}
+	& $s$ & $a$ & $l_0$ & $c_0$ & $\sigma_l$ & $\sigma_c$ & $\alpha$ & $n$ \\
+	\hline
+	initial & 1 & 20 & 14 & 17 & 1 & 1 & 1 & 1 \\
+	estimated & 3.0660 & 9.8379 & 14.9496 & 15.0309 & 10.0970 & 5.0054 & 0.2978 & 0.4922 \\
+	theoretical & 3 & 10 & 15 & 15 & 10 & 5 & 0.3 & 0.5
+\end{tabular}
+\caption{parameter comparison}
+\label{tab:param}
+\end{table}
+
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=\textwidth/2]{images/galaxy_MLE}
-	\caption{estimated galaxy from noisy data}
-	\label{fig:MLE}
+	\begin{minipage}[b]{0.4\textwidth}
+		\includegraphics[width=\textwidth]{images/galaxy_MLE}
+		\caption{estimated galaxy}
+		\label{fig:MLE}
+	\end{minipage}
+	\begin{minipage}[b]{0.4\textwidth}
+		\includegraphics[width=\textwidth]{images/residual_histogram}
+		\caption{Histogram of residual data}
+		\label{fig:residual}
+	\end{minipage}
 \end{figure}
 
+As can be seen in \cref{tab:param}, the estimated parameters are extremely close to the theoretical ones that were used to obtain \cref{fig:initial}, our initial image of the elliptic galaxy. This results in an image (c.f. \cref{fig:MLE}) of the galaxy that is very similar to the initial one, even though the initially guessed parameters were not chosen close to the theoretical ones.
+
+Since this optimisation approach is very susceptible to the initial parameter guess, it is not guaranteed that this approach will succeed and result in physically reasonable optimal parameters. To avoid this behaviour in practice, the initial parameters can be altered until they are within an acceptable range or the optimisation process can be modified such that physically unreasonable parameters are rejected during the process - which adversely would increase the complexity of the whole process.
+
+By subtracting the image created with the estimated parameters from the noisy image presumably obtained by the telescope (\cref{fig:addedNoise}), we obtain the so-called "residuals", which correspond to the noise that is included in the obtained image.
+Considering the histogram of these residuals as shown in \cref{fig:residual} and by calculating the standard deviation (c.f. Matlab code in \cref{Appendix B}), the noise seems to be compatible with our model for the noise - a simple white gaussian noise - since the histogram shows a more or less even distribution of numerical data and the standard deviation of $0.7949$ is very close to our initially introduced value of $\sigma = 0.8$.
+
+
+
+However, varying the initial parameters for the optimisation can result in unusable data - which can not even be interpreted as elliptic galaxy anymore, especially if the initial parameters are too different from the theoretical ones. The closer the parameters are chosen to their respective theoretical value the better the maximum likelihood estimation performs.
+
+
+% residual standard deviation: 0.7949
 %parameters for that image:    
-%3.0127
-%   10.2206
-%   14.9382
-%   15.1359
-%    4.8007
-%    9.7990
-%   -1.2578
-%    0.4017
+%    3.0660
+%    9.8379
+%   14.9496
+%   15.0309
+%   10.0970
+%    5.0054
+%    0.2978
+%    0.4922
+% guessed parameters:
+%     1
+%    20
+%    14
+%    17
+%     1
+%     1
+%     1
+%     1
+% theoretical parameters:
+%l0 = floor(L/2);
+%c0 = floor(C/2);
+%sigma_l = 10;
+%sigma_c = 5;
+%alpha = 0.3;
+%n = 0.5;
+%a = 10;
+%s = 3;
 
 
 %%%%%%%%%%%%%%%%% TASK 3 %%%
 \section{Estimation in the Bayesian framework}
+
+
+
 
 \subsection{Maximum a posteriori estimator}
 
