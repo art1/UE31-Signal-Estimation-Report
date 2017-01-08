@@ -2,12 +2,12 @@ function Im = Sersic(nu,Lig,Col)
 
 % Im = Sersic(nu,Lig,Col)
 %
-% Calcul de l'image d'un modèle de Sersic sur une grille (définie par les
-% matrices Lig et Col) de paramètres contenus dans le vecteur nu:
+% Calcul de l'image d'un module de Sersic sur une grille (definie par les
+% matrices Lig et Col) de parametres contenus dans le vecteur nu:
 %  - nu(1) = l_0 : position en ligne
 %  - nu(2) = c_0 : position en colonne
-%  - nu(3) = sigma_l : écart-type en ligne
-%  - nu(4) = sigma_c : écart-type en colonnne 
+%  - nu(3) = sigma_l : cart-type en ligne
+%  - nu(4) = sigma_c : cart-type en colonnne 
 %  - nu(5) = angle : angle en radian   
 %  - nu(6) =  n : indice de Sersic
 

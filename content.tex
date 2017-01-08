@@ -32,15 +32,29 @@ This leads to the following equation modelling the data
 
 with $a$ as the amplitude of the galaxy, $s$ the amplitude of the sky's background and $n(l,c)$ as noise.
 
-By assuming a white Gaussian noise with the known variance $\sigma_n^2$ and using the given Sersic-function (see \cref{Appendix A}) we can create a "initial image" that will be used as the initial data set as previously mentioned, see \cref{img:initial}.
+
+Using the Sersic profile we can now generate an artificial elliptic galaxy, see \cref{fig:initial}.
+
+
 \begin{figure}[!h]
 	\centering
-	\includegraphics{images/galaxy_initial}s
-	\caption{Initial Data Set, with a artificial elliptic galaxy}
-	\label{img:initial}
+	\begin{minipage}[b]{0.4\textwidth}
+		\includegraphics[width=\textwidth]{images/galaxy_initial}
+		\caption{Initial data set}
+		\label{fig:initial}
+	\end{minipage}
+	\begin{minipage}[b]{0.4\textwidth}
+		\includegraphics[width=\textwidth]{images/galaxy_noise}
+		\caption{Random noise added}
+		\label{fig:addedNoise}
+	\end{minipage}
 \end{figure}
 
-The parameters used to create above mentioned figure are given below.
+By assuming a Gaussian white noise with the known variance $\sigma_n^2$ and using the initial image of the galaxy, we can model the elliptic galaxy as it would have been seen by a ground-based telescope, see \cref{fig:addedNoise}.
+
+
+
+The parameters used to create above mentioned figure are given as follows
 
 
 	\begin{align*}
@@ -50,6 +64,9 @@ The parameters used to create above mentioned figure are given below.
 
 with $L,C$ as height respectively width of image in pixels, $l_0, c_0$ the galaxy's centre in pixel coordinates and $\sigma_l, \sigma_c$ as length parameters.
 \todo{probalby don't need this explananation here, see above text}
+
+
+
 
 
 %%%%%%%%%%%%%%%%% TASK 1 %%%
@@ -83,6 +100,13 @@ This result is very close to the original parameters used for the simulation of 
 
 %%%%%%%%%%%%%%%%% TASK 2 %%%
 \section{Maximum likelihood estimation of all parameters}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=\textwidth/2]{images/galaxy_MLE}
+	\caption{estimated galaxy from noisy data}
+	\label{fig:MLE}
+\end{figure}
 
 
 %%%%%%%%%%%%%%%%% TASK 3 %%%

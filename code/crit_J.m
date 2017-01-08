@@ -1,3 +1,4 @@
+% crit_J function to calculate cost function (to minimize it)
 function J = crit_J(p, D)
     nu = p(3:end);
     theta = transpose([p(1) p(2)]);
