@@ -27,6 +27,7 @@ This leads to the following equation modelling the data
 \begin{equation}
 	\centering
 	d(l,c) = s + a I(l,c) + n(l,c)
+\label{eq:dlc}
 \end{equation}
 
 with $a$ as the amplitude of the galaxy, $s$ the amplitude of the sky's background and $n(l,c)$ as noise.
@@ -41,13 +42,11 @@ By assuming a white Gaussian noise with the known variance $\sigma_n^2$ and usin
 
 The parameters used to create fig. \ref{img:initial} are given below.
 
-\begin{equation}
-	\centering
+
 	\begin{align*}
 		L, C & = 30px & l_0, c_0 & = 15 & \sigma_l & = 10 & \sigma_c & = 5 \\
 		\alpha & = 0.3 & n & = 0.4 & a & = 10 & s & = 3 
 	\end{align*}
-\end{equation}
 
 with $L,C$ as height respectively width of image in pixels, $l_0, c_0$ the galaxy's centre in pixel coordinates and $\sigma_l, \sigma_c$ as length parameters.
 \todo{probalby don't need this explananation here, see above text}
@@ -55,9 +54,32 @@ with $L,C$ as height respectively width of image in pixels, $l_0, c_0$ the galax
 
 %%%%%%%%%%%%%%%%% TASK 1 %%%
 \section{Estimation with known Galaxy's location and shape parameters}
-Having successfully modelled a simple elliptic galaxy
+Having successfully modelled a simple elliptic galaxy, this model is used as input data for the simulation of an estimation of the galaxy's and sky background's amplitude, while assuming that the galaxy's position and shape parameters are known. This estimation can be formulated via:
+\begin{equation}
+\boldsymbol{y}=\boldsymbol{H}\boldsymbol{\theta}+\boldsymbol{n}(c,l)
+\label{eq:generalestimation}
+\end{equation}
+Here, $\boldsymbol{y}$ is the actual measurement, in our case it is the intensity of the galaxy. However, one has to keep in mind that for the  following steps, we use the simulated galaxy intensity as described above as our measured galaxy intensity. $\boldsymbol{\theta}$ is the vector of estimated parameters, which are in our case the galaxy's amplitude $a$ and the background's amplitude $s$, so $\boldsymbol{\theta}=[s,a]^{\mathrm{T}}$. $\boldsymbol{H}$ is a matrix describing the underlying model, which in our case also depends on the pixel position since the intensity described by the sersic function depends on the distance towards the centre of the galaxy, and $\boldsymbol{n}(l,c)$ is a noise component also depending on the pixel position (l,c). In order to satisfy equation \ref{eq:dlc} using equation \ref{eq:generalestimation}, one has to define $\boldsymbol{H}$ in a special matrix form, which is given by:
+\begin{equation}
+H_{l,c}=\left(\begin{array}{cc}1& \exp(-R_{l,c}^{\frac{1}{n}}) \end{array}\right)\\
+\end{equation}
+Thus, $\boldsymbol{H}$ is a $2\times (L\cdot C)$ matrix, describing the intensity profile of the galaxy for each pixel (l,c). Therefore, our data $\boldsymbol{d}$ describing the measured data for all pixels yields:
+\begin{equation}
+\boldsymbol{d}=\boldsymbol{H}\boldsymbol{\theta}+\boldsymbol{n}(c,l),
+\label{eq:generalestimation}
+\end{equation}
+where $d$ is a vector with $L\cdot C$ elements.\\
+\newline
+In order the obtain maximum likelyhood estimator for $\boldsymbol{\theta}$ as a function of $\boldsymbol{d}$, one has to calculate:
+\begin{equation}
+\boldsymbol{\theta}=\left(\boldsymbol{H'H}\right)^{-1}\cdot\boldsymbol{H}\cdot\boldsymbol{d}
+\end{equation}
 
-
+The used matlab code performing this is shown in the appendix. The resulting maximum likelyhood estimators for the galaxy's and the sky background's amplitudes are:
+\begin{equation*}
+\boldsymbol{\theta}=\left[2.9576\;10.0131 \right]^{\mathrm{T}}
+\end{equation*}
+This result is very close to the original parameters used for the simulation of the data with $ \boldsymbol{\theta}_{initial}=\left[3\;10 \right]^{\mathrm{T}}$ (see list of parameters above). However, we assumed the galaxy center and shape to be known, which drastically reduces the number of unknowns in this fit, and therefore results in a very good fit result.
 
 %%%%%%%%%%%%%%%%% TASK 2 %%%
 \section{Maximum likelihood estimation of all parameters}
