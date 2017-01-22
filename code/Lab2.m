@@ -63,7 +63,7 @@ while T > tau
 end
 
 figure, plot(t,r_n,'+')
-MethodOne = size(Gamma0)
+MethodOneIterations = size(Gamma0);
 %ylim([-4 4])
 
 
@@ -93,4 +93,32 @@ while T > tau
 end
 
 figure, plot(t,r_n,'+')
-MethodTwo = size(Gamma0)
+MethodTwoIterations = size(Gamma0);
+
+
+% 3.3 Orthogonal Least Square
+r_n = x_n;
+Gamma0 = [];
+W_g = [];
+a = 0;
+tau = chisqq(0.95,N)
+T = tau +1;
+k = 1;
+test = (sigma^2)*tau;
+while T > tau
+    [val, k] = ols(W,x_n,Inf,test);
+    Gamma0 = [Gamma0 k];
+    
+    W_g = [];
+    for l=1:length(Gamma0)
+        W_g = [W_g W(:,Gamma0(l))];
+    end
+    
+    a = ((W_g'*W_g)^(-1))*W_g'*x_n;
+    
+    r_n = x_n - W_g*a;
+    T = (norm(r_n)^2)/(sigma^2)
+end
+
+figure, plot(t,r_n,'+')
+MethodThrIterations = size(Gamma0);
