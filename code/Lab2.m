@@ -1,4 +1,4 @@
-clear; clc; clear all;
+close all; clc; clear all;
 load('data.mat')
 
 x = 0;
@@ -47,8 +47,7 @@ plot(freq,abs(Win))
 
 % 3
 % Gamma is a set, Gamma = [Gamma, index]
-k = 0;
-r_n = x;
+r_n = x_n;
 Gamma0 = [];
 a = zeros(2049,1);
 
@@ -56,7 +55,6 @@ a = zeros(2049,1);
 %[val, index] = max(abs(W'*r_n))
 tau = chisqq(0.95,N)
 T = tau +1;
-first = true;
 k = 1;
 
 
@@ -70,8 +68,34 @@ while T > tau
 end
 
 figure, plot(t,r_n,'+')
+MethodOne = size(Gamma0)
 %ylim([-4 4])
 
 
 % 3.2 Orthogonal Matching Pursuit Algorithm
 
+r_n = x_n;
+Gamma0 = [];
+W_g = [];
+a = 0;
+tau = chisqq(0.95,N)
+T = tau +1;
+k = 1;
+
+while T > tau
+    [val, k] = max(abs(W'*r_n));
+    Gamma0 = [Gamma0 k];
+    
+    W_g = [];
+    for l=1:length(Gamma0)
+        W_g = [W_g W(:,Gamma0(l))];
+    end
+    
+    a = ((W_g'*W_g)^(-1))*W_g'*x_n;
+    
+    r_n = x_n - W_g*a;
+    T = (norm(r_n)^2)/(sigma^2)
+end
+
+figure, plot(t,r_n,'+')
+MethodTwo = size(Gamma0)
