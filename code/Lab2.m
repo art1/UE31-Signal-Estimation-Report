@@ -52,7 +52,6 @@ tau = chisqq(0.95,N)
 T = tau +1;
 k = 1;
 
-
 while T > tau
     W_current = W(:,k);
     [val, k] = max(abs(W'*r_n));
@@ -62,7 +61,14 @@ while T > tau
     T = (norm(r_n)^2)/(sigma^2);
 end
 
-figure, plot(t,r_n,'+')
+%periodogram =  abs(W'*a)/N;
+figure, plot(freq,abs(a));
+figure
+plot(t,W*a,'g+')
+hold on;
+plot(t,x_n,'r+')
+
+
 MethodOneIterations = size(Gamma0);
 %ylim([-4 4])
 
@@ -72,13 +78,13 @@ MethodOneIterations = size(Gamma0);
 r_n = x_n;
 Gamma0 = [];
 W_g = [];
-a = 0;
+a = [];
 tau = chisqq(0.95,N)
 T = tau +1;
 k = 1;
 
 while T > tau
-    [val, k] = max(abs(W'*r_n));
+    [val, k] = max(abs(W'*r_n))
     Gamma0 = [Gamma0 k];
     
     W_g = [];
@@ -87,14 +93,27 @@ while T > tau
     end
     
     a = ((W_g'*W_g)^(-1))*W_g'*x_n;
+    %size(a)
+    %a_vec = [a_vec a];
     
     r_n = x_n - W_g*a;
     T = (norm(r_n)^2)/(sigma^2)
 end
+a_plot = zeros(2049,1);
+for ind=1:length(Gamma0)
+   a_plot(Gamma0(ind)) = a(ind);
+end
 
-figure, plot(t,r_n,'+')
+%figure, plot(freq,abs(W'*(W_g*a))/N)
+figure, plot(freq,abs(a_plot));
+%hold on;
+%plot(t,x_n,'r+');
+% periodogram =  abs(W'*r_n)/N;
+% figure
+% plot(freq,periodogram)
+%figure, plot(freq,a);
 MethodTwoIterations = size(Gamma0);
-
+%error('kaaaaa')
 
 % 3.3 Orthogonal Least Square
 r_n = x_n;
@@ -105,6 +124,7 @@ tau = chisqq(0.95,N)
 T = tau +1;
 k = 1;
 test = (sigma^2)*tau;
+a_vec = [];
 while T > tau
     [val, k] = ols(W,x_n,Inf,test);
     Gamma0 = [Gamma0 k];
@@ -115,10 +135,58 @@ while T > tau
     end
     
     a = ((W_g'*W_g)^(-1))*W_g'*x_n;
+    a_vec = [a_vec a];
     
     r_n = x_n - W_g*a;
     T = (norm(r_n)^2)/(sigma^2)
 end
 
-figure, plot(t,r_n,'+')
+a_plot = zeros(2049,1);
+for ind=1:length(Gamma0)
+   a_plot(Gamma0(ind)) = a_vec(ind);
+end
+
+figure, plot(freq,abs(a_plot))
+figure
+plot(t,W_g*a,'g+')
+hold on;
+plot(t,x_n,'r+')
+%figure, plot(t,W*a,'+')
+% periodogram =  abs(W'*r_n)/N;
+% figure
+% plot(freq,periodogram)
+%figure, plot(freq,abs(a));
 MethodThrIterations = size(Gamma0);
+
+
+% 4 Sparse representation with convex relations
+r_n = x_n;
+Gamma0 = [];
+W_g = [];
+a = zeros(2049,1);
+tau = chisqq(0.95,N)
+T = tau +1;
+k = 1;
+test = (sigma^2)*tau;
+lambda_max = max(abs(W'*x_n));
+lambda = .6* lambda_max;
+n_it_max = 100000;
+while T > tau
+    [val, k] = ols(W,x_n,Inf,test);
+    Gamma0 = [Gamma0 k];
+    
+    W_g = [];
+    for l=1:length(Gamma0)
+        W_g = [W_g W(:,Gamma0(l))];
+    end
+    
+    %a = ((W_g'*W_g)^(-1))*W_g'*x_n;
+    a1 = min_L2_L1_0(x_n,W,lambda,n_it_max);
+
+    a = min(norm(x_n - W*a)^2) + lambda.*a1;
+    r_n = x_n - W_g*a;
+    T = (norm(r_n)^2)/(sigma^2)
+end
+
+figure, plot(t,r_n,'+')
+MethodFourIterations = size(Gamma0);
