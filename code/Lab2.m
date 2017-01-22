@@ -61,12 +61,11 @@ while T > tau
     T = (norm(r_n)^2)/(sigma^2);
 end
 
-%periodogram =  abs(W'*a)/N;
-figure, plot(freq,abs(a));
-figure
-plot(t,W*a,'g+')
-hold on;
-plot(t,x_n,'r+')
+% figure, plot(freq,abs(a));
+% figure
+% plot(t,W*a,'g+')
+% hold on;
+% plot(t,x_n,'r+')
 
 
 MethodOneIterations = size(Gamma0);
@@ -104,16 +103,8 @@ for ind=1:length(Gamma0)
    a_plot(Gamma0(ind)) = a(ind);
 end
 
-%figure, plot(freq,abs(W'*(W_g*a))/N)
-figure, plot(freq,abs(a_plot));
-%hold on;
-%plot(t,x_n,'r+');
-% periodogram =  abs(W'*r_n)/N;
-% figure
-% plot(freq,periodogram)
-%figure, plot(freq,a);
+%figure, plot(freq,abs(a_plot));
 MethodTwoIterations = size(Gamma0);
-%error('kaaaaa')
 
 % 3.3 Orthogonal Least Square
 r_n = x_n;
@@ -146,47 +137,21 @@ for ind=1:length(Gamma0)
    a_plot(Gamma0(ind)) = a_vec(ind);
 end
 
-figure, plot(freq,abs(a_plot))
-figure
-plot(t,W_g*a,'g+')
-hold on;
-plot(t,x_n,'r+')
-%figure, plot(t,W*a,'+')
-% periodogram =  abs(W'*r_n)/N;
+% figure, plot(freq,abs(a_plot))
 % figure
-% plot(freq,periodogram)
-%figure, plot(freq,abs(a));
+% plot(t,W_g*a,'g+')
+% hold on;
+% plot(t,x_n,'r+')
 MethodThrIterations = size(Gamma0);
 
 
 % 4 Sparse representation with convex relations
-r_n = x_n;
-Gamma0 = [];
-W_g = [];
-a = zeros(2049,1);
-tau = chisqq(0.95,N)
-T = tau +1;
-k = 1;
-test = (sigma^2)*tau;
+
 lambda_max = max(abs(W'*x_n));
-lambda = .6* lambda_max;
+lambda = 0.05 * lambda_max;
 n_it_max = 100000;
-while T > tau
-    [val, k] = ols(W,x_n,Inf,test);
-    Gamma0 = [Gamma0 k];
-    
-    W_g = [];
-    for l=1:length(Gamma0)
-        W_g = [W_g W(:,Gamma0(l))];
-    end
-    
-    %a = ((W_g'*W_g)^(-1))*W_g'*x_n;
-    a1 = min_L2_L1_0(x_n,W,lambda,n_it_max);
 
-    a = min(norm(x_n - W*a)^2) + lambda.*a1;
-    r_n = x_n - W_g*a;
-    T = (norm(r_n)^2)/(sigma^2)
-end
-
-figure, plot(t,r_n,'+')
+a1 = min_L2_L1_0(x_n,W,lambda,n_it_max);
+figure, plot(t,W*a1,'+')
+figure, plot (freq,abs(a1));
 MethodFourIterations = size(Gamma0);
