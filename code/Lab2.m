@@ -18,9 +18,9 @@ noise =  sigma * randn(1,length(x));
 x_n = x + transpose(noise)
 
 figure
-plot(t,x,'+')
+plot(t,x,'g+')
 hold on;
-plot(t,x_n,'+')
+plot(t,x_n,'r+')
 
 
 % irregular sampling case
@@ -50,16 +50,28 @@ plot(freq,abs(Win))
 k = 0;
 r_n = x;
 Gamma0 = [];
-a = 0;
+a = zeros(2049,1);
+
 
 %[val, index] = max(abs(W'*r_n))
 tau = chisqq(0.95,N)
-T = 0;
+T = tau +1;
+first = true;
+k = 1;
 
-while T < tau
-    [val, index] = max(abs(W'*r_n));
-    Gamma0 = [Gamma0 index];
-    a = a + (1./(W'*W))*W'*r_n;
-    r_n = r_n - ((1./(W'*W))*W'*r_n).'*W.'
+
+while T > tau
+    W_current = W(:,k);
+    [val, k] = max(abs(W'*r_n));
+    Gamma0 = [Gamma0 k];
+    a(k) = a(k) + (1/((W_current')*W_current))*W_current'*r_n;
+    r_n = r_n - (((1/(W_current'*W_current)).*W_current'*r_n).*W_current);
+    T = (norm(r_n)^2)/(sigma^2);
 end
+
+figure, plot(t,r_n,'+')
+%ylim([-4 4])
+
+
+% 3.2 Orthogonal Matching Pursuit Algorithm
 
