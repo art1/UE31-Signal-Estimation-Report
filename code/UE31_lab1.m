@@ -43,7 +43,7 @@ bias = ML - real
 
 % we create our p-vector that contains theta and nu parameters
 % p_init = [s; a; nu];
-p_init = [1;20;14;17;1;1;1;0.5];
+p_init = [1;20;14;17;9;4;1;0.5];
 
 % start optimisation using the crit_J cost function
 options = optimset('fminsearch');
