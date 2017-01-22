@@ -92,12 +92,15 @@ while T > tau
     T = (norm(r_n)^2)/(sigma^2);
 end
 MethodOneIterations = size(Gamma0);
+[MaxMP,MaxIdxMP] = findpeaks(abs(a),'threshold',0.13);
 
 figure
 subplot(2,1,1)
 plot(freq,abs(a));
 hold on;
 plot(f_th,A_th/2,'r+')
+hold on;
+plot((freq(MaxIdxMP)),MaxMP,'bo')
 for num=1:length(f_th)
     hold on;
    line([f_th(num) f_th(num)], [0 A_th(num)/2], 'Color','r','LineStyle','--') 
@@ -146,12 +149,15 @@ for ind=1:length(Gamma0)
    a_plot(Gamma0(ind)) = a(ind);
 end
 MethodTwoIterations = size(Gamma0);
+[MaxOMP,MaxIdxOMP] = findpeaks(abs(a_plot),'threshold',0.1);
 
 figure
 subplot(2,1,1)
 plot(freq,abs(a_plot));
 hold on;
 plot(f_th,A_th/2,'r+')
+hold on;
+plot((freq(MaxIdxOMP)),MaxOMP,'bo')
 for num=1:length(f_th)
     hold on;
    line([f_th(num) f_th(num)], [0 A_th(num)/2], 'Color','r','LineStyle','--') 
@@ -205,12 +211,15 @@ for ind=1:length(Gamma0)
    a_plot(Gamma0(ind)) = a_vec(ind);
 end
 MethodThrIterations = size(Gamma0);
+[MaxOLS,MaxIdxOLS] = findpeaks(abs(a_plot),'threshold',0.1);
 
 figure
 subplot(2,1,1)
 plot(freq,abs(a_plot));
 hold on;
 plot(f_th,A_th/2,'r+')
+hold on;
+plot((freq(MaxIdxOLS)),MaxOLS,'bo')
 for num=1:length(f_th)
     hold on;
    line([f_th(num) f_th(num)], [0 A_th(num)/2], 'Color','r','LineStyle','--') 
@@ -238,14 +247,17 @@ n_it_max = 100000;
 
 a1 = min_L2_L1_0(x_n,W,lambda,n_it_max);
 
+[MaxSparse,MaxIdxSparse] = findpeaks(abs(a1),'MinPeakHeight',0.045);
 
 figure
 subplot(2,1,1)
 plot(freq,abs(a1));
 hold on;
 plot(f_th,A_th/2,'r+')
+hold on;
+plot((freq(MaxIdxSparse)),MaxSparse,'bo')
 for num=1:length(f_th)
-    hold on;
+   hold on;
    line([f_th(num) f_th(num)], [0 A_th(num)/2], 'Color','r','LineStyle','--') 
 end
 xlim([28 40])
@@ -260,3 +272,18 @@ suptitle('Sparse representation with convex relaxation');
 set(gcf, 'PaperUnits', 'points');
 set(gcf, 'PaperPosition', [0 0 900 450]);
 saveas(gcf,'../images/convex.png')
+
+% Save detected data to file:
+fileID = fopen('../images/img_data.txt','w');
+fprintf(fileID, 'frequency ; amplitude\n ');
+fprintf(fileID, '# Matching Pursuit, %d iterations\n', length(MethodOneIterations(1)));
+fprintf(fileID, [repmat(' %0.3f ; %0.3f \n', 1, length(MaxIdxMP))] , [ freq(MaxIdxMP).' MaxMP].');
+fprintf(fileID, '# Orthogonal Matching Pursuit, %d iterations\n', length(MethodTwoIterations(2)));
+fprintf(fileID, [repmat(' %0.3f ; %0.3f \n', 1, length(MaxIdxOMP))] , [ freq(MaxIdxOMP).' MaxOMP].');
+fprintf(fileID, '# Orthogonal Least Square, %d iterations\n', length(MethodThrIterations(1)));
+fprintf(fileID, [repmat(' %0.3f ; %0.3f \n', 1, length(MaxIdxOLS))] , [ freq(MaxIdxOLS).' MaxOLS].');
+fprintf(fileID, '# Convex Relaxation\n');
+fprintf(fileID, [repmat(' %0.3f ; %0.3f \n', 1, length(MaxIdxSparse))] , [ freq(MaxIdxSparse).' MaxSparse].');
+
+fclose(fileID);
+
