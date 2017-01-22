@@ -2,7 +2,6 @@ close all; clc; clear all;
 load('data.mat')
 
 x = 0;
-x_n = 0;
 SNR = 10;
 
 for k=1 : 5
@@ -45,14 +44,10 @@ Win=W'*ones(N,1)/N;
 figure
 plot(freq,abs(Win))
 
-% 3
-% Gamma is a set, Gamma = [Gamma, index]
+% 3.1 Matching Pursuit Algorithm
 r_n = x_n;
 Gamma0 = [];
 a = zeros(2049,1);
-
-
-%[val, index] = max(abs(W'*r_n))
 tau = chisqq(0.95,N)
 T = tau +1;
 k = 1;
