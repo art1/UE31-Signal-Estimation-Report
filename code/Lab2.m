@@ -20,9 +20,18 @@ figure
 plot(t,x,'g+')
 hold on;
 plot(t,x_n,'r+')
+legend('real data',sprintf('data with gaussian noise, stdDev: %0.3f',sigma))
+title('Herbig star HD 104237 data samples')
+ylabel('signal amplitude')
+xlabel('time')
+set(gcf, 'PaperUnits', 'points');
+set(gcf, 'PaperPosition', [0 0 900 450]);
+saveas(gcf,'../images/data.png')
 
 
-% irregular sampling case
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 2.2  irregular sampling case
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 fmax = 100;
 M = 1024;
 N = length(x_n);
@@ -31,20 +40,42 @@ W=exp(2*j*pi*t*freq);
 periodogram =  abs(W'*x_n)/N;
 
 figure
+subplot(2,2,1) 
 plot(freq,periodogram)
 % plot real frequencies
 hold on
-plot(f_th,A_th/2,'+')
+plot(f_th,A_th/2,'r+')
 hold on
-plot((-1.*f_th),A_th/2,'+')
+plot((-1.*f_th),A_th/2,'r+')
+xlabel('frequency')
+ylabel('amplitude')
+title('frequency representation')
 
+subplot(2,2,3)
+plot(freq,periodogram)
+hold on;
+plot(f_th,A_th/2,'r+')
+xlim([28 40])
+xlabel('frequency')
+ylabel('amplitude')
+legend('frequency distribution','original frequencies')
 
+% plot spectral window
+subplot(2,2,[2 4])
 Win=W'*ones(N,1)/N;
-
-figure
 plot(freq,abs(Win))
+xlim([-20 20])
+title('spectral window')
+xlabel('frequency')
+ylabel('amplitude')
 
+set(gcf, 'PaperUnits', 'points');
+set(gcf, 'PaperPosition', [0 0 900 450]);
+saveas(gcf,'../images/data_freq.png')
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 3.1 Matching Pursuit Algorithm
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 r_n = x_n;
 Gamma0 = [];
 a = zeros(2049,1);
@@ -60,20 +91,32 @@ while T > tau
     r_n = r_n - (((1/(W_current'*W_current)).*W_current'*r_n).*W_current);
     T = (norm(r_n)^2)/(sigma^2);
 end
-
-% figure, plot(freq,abs(a));
-% figure
-% plot(t,W*a,'g+')
-% hold on;
-% plot(t,x_n,'r+')
-
-
 MethodOneIterations = size(Gamma0);
-%ylim([-4 4])
+
+figure
+subplot(2,1,1)
+plot(freq,abs(a));
+hold on;
+plot(f_th,A_th/2,'r+')
+for num=1:length(f_th)
+    hold on;
+   line([f_th(num) f_th(num)], [0 A_th(num)/2], 'Color','r','LineStyle','--') 
+end
+xlim([28 40])
+legend('reconstructed frequency','original frequencies')
+xlabel('frequency')
+ylabel('amplitude')
+subplot(2,1,2)
+plot(t,W*a,'+')
+suptitle('Matching Pursuit (pre-whitening algorithm')
+set(gcf, 'PaperUnits', 'points');
+set(gcf, 'PaperPosition', [0 0 900 450]);
+saveas(gcf,'../images/mp.png')
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 3.2 Orthogonal Matching Pursuit Algorithm
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 r_n = x_n;
 Gamma0 = [];
 W_g = [];
@@ -102,11 +145,36 @@ a_plot = zeros(2049,1);
 for ind=1:length(Gamma0)
    a_plot(Gamma0(ind)) = a(ind);
 end
-
-%figure, plot(freq,abs(a_plot));
 MethodTwoIterations = size(Gamma0);
 
+figure
+subplot(2,1,1)
+plot(freq,abs(a_plot));
+hold on;
+plot(f_th,A_th/2,'r+')
+for num=1:length(f_th)
+    hold on;
+   line([f_th(num) f_th(num)], [0 A_th(num)/2], 'Color','r','LineStyle','--') 
+end
+xlim([28 40])
+legend('reconstructed frequency','original frequencies')
+xlabel('frequency')
+ylabel('amplitude')
+subplot(2,1,2)
+plot(t,W*a_plot,'+')
+xlabel('time')
+ylabel('amplitude')
+suptitle('Orthogonal Matching Pursuit algorithm');
+set(gcf, 'PaperUnits', 'points');
+set(gcf, 'PaperPosition', [0 0 900 450]);
+saveas(gcf,'../images/omp.png')
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 3.3 Orthogonal Least Square
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 r_n = x_n;
 Gamma0 = [];
 W_g = [];
@@ -136,22 +204,59 @@ a_plot = zeros(2049,1);
 for ind=1:length(Gamma0)
    a_plot(Gamma0(ind)) = a_vec(ind);
 end
-
-% figure, plot(freq,abs(a_plot))
-% figure
-% plot(t,W_g*a,'g+')
-% hold on;
-% plot(t,x_n,'r+')
 MethodThrIterations = size(Gamma0);
 
+figure
+subplot(2,1,1)
+plot(freq,abs(a_plot));
+hold on;
+plot(f_th,A_th/2,'r+')
+for num=1:length(f_th)
+    hold on;
+   line([f_th(num) f_th(num)], [0 A_th(num)/2], 'Color','r','LineStyle','--') 
+end
+xlim([28 40])
+xlabel('frequency')
+ylabel('amplitude')
+legend('reconstructed frequency','original frequencies')
+subplot(2,1,2)
+plot(t,W*a_plot,'+')
+xlabel('time')
+ylabel('amplitude')
+suptitle('Orthogonal Least Square');
+set(gcf, 'PaperUnits', 'points');
+set(gcf, 'PaperPosition', [0 0 900 450]);
+saveas(gcf,'../images/omp.png')
 
-% 4 Sparse representation with convex relations
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 4 Sparse representation with convex relation
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 lambda_max = max(abs(W'*x_n));
-lambda = 0.05 * lambda_max;
+lambda = 0.06 * lambda_max;
 n_it_max = 100000;
 
 a1 = min_L2_L1_0(x_n,W,lambda,n_it_max);
-figure, plot(t,W*a1,'+')
-figure, plot (freq,abs(a1));
-MethodFourIterations = size(Gamma0);
+
+
+figure
+subplot(2,1,1)
+plot(freq,abs(a1));
+hold on;
+plot(f_th,A_th/2,'r+')
+for num=1:length(f_th)
+    hold on;
+   line([f_th(num) f_th(num)], [0 A_th(num)/2], 'Color','r','LineStyle','--') 
+end
+xlim([28 40])
+xlabel('frequency')
+ylabel('amplitude')
+legend('reconstructed frequency','original frequencies')
+subplot(2,1,2)
+plot(t,W*a1,'+')
+xlabel('time')
+ylabel('amplitude')
+suptitle('Sparse representation with convex relaxation');
+set(gcf, 'PaperUnits', 'points');
+set(gcf, 'PaperPosition', [0 0 900 450]);
+saveas(gcf,'../images/convex.png')
