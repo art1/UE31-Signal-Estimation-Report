@@ -6,16 +6,16 @@ x = 0;
 SNR = 10;
 
 for k=1 : 5
-   x = x + (A_th(k) * sin(2*pi*f_th(k)*t + phi_th(k)))
+   x = x + (A_th(k) * sin(2*pi*f_th(k)*t + phi_th(k)));
 end
 
 % calculate noise amplitude
 pms = sumsqr(x)/length(x);
 % standard Deviation
-sigma = sqrt(pms/10);
-
+sigma = sqrt(pms/SNR);
+% add noise to the calculations
 noise =  sigma * randn(1,length(x));
-x_n = x + transpose(noise)
+x_n = x + transpose(noise);
 
 figure
 plot(t,x,'g+')
@@ -38,7 +38,7 @@ fmax = 100;
 M = 1024;
 N = length(x_n);
 freq =(-M:M)/M*fmax;
-W=exp(2*j*pi*t*freq);
+W=exp(2*1i*pi*t*freq);
 periodogram =  abs(W'*x_n)/N;
 
 figure
@@ -83,7 +83,7 @@ end
 r_n = x_n;
 Gamma0 = [];
 a = zeros(2049,1);
-tau = chisqq(0.95,N)
+tau = chisqq(0.95,N);
 T = tau +1;
 k = 1;
 
@@ -130,7 +130,7 @@ r_n = x_n;
 Gamma0 = [];
 W_g = [];
 a = [];
-tau = chisqq(0.95,N)
+tau = chisqq(0.95,N);
 T = tau +1;
 k = 1;
 
@@ -144,11 +144,8 @@ while T > tau
     end
     
     a = ((W_g'*W_g)^(-1))*W_g'*x_n;
-    %size(a)
-    %a_vec = [a_vec a];
-    
     r_n = x_n - W_g*a;
-    T = (norm(r_n)^2)/(sigma^2)
+    T = (norm(r_n)^2)/(sigma^2);
 end
 a_plot = zeros(2049,1);
 for ind=1:length(Gamma0)
@@ -193,7 +190,7 @@ r_n = x_n;
 Gamma0 = [];
 W_g = [];
 a = 0;
-tau = chisqq(0.95,N)
+tau = chisqq(0.95,N);
 T = tau +1;
 k = 1;
 test = (sigma^2)*tau;
@@ -211,7 +208,7 @@ while T > tau
     a_vec = [a_vec a];
     
     r_n = x_n - W_g*a;
-    T = (norm(r_n)^2)/(sigma^2)
+    T = (norm(r_n)^2)/(sigma^2);
 end
 
 a_plot = zeros(2049,1);
