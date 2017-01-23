@@ -1,5 +1,6 @@
 close all; clc; clear all;
 load('data.mat')
+SAVEDATA = false;
 
 x = 0;
 SNR = 10;
@@ -24,14 +25,15 @@ legend('real data',sprintf('data with gaussian noise, stdDev: %0.3f',sigma))
 title('Herbig star HD 104237 data samples')
 ylabel('signal amplitude')
 xlabel('time')
-set(gcf, 'PaperUnits', 'points');
-set(gcf, 'PaperPosition', [0 0 900 450]);
-saveas(gcf,'../images/data.png')
+if SAVEDATA
+    set(gcf, 'PaperUnits', 'points');
+    set(gcf, 'PaperPosition', [0 0 900 450]);
+    saveas(gcf,'../images/data.png')
+end
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 2.2  irregular sampling case
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 fmax = 100;
 M = 1024;
 N = length(x_n);
@@ -69,13 +71,15 @@ title('spectral window')
 xlabel('frequency')
 ylabel('amplitude')
 
-set(gcf, 'PaperUnits', 'points');
-set(gcf, 'PaperPosition', [0 0 900 450]);
-saveas(gcf,'../images/data_freq.png')
+if SAVEDATA
+    set(gcf, 'PaperUnits', 'points');
+    set(gcf, 'PaperPosition', [0 0 900 450]);
+    saveas(gcf,'../images/data_freq.png')
+end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 3.1 Matching Pursuit Algorithm
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 r_n = x_n;
 Gamma0 = [];
 a = zeros(2049,1);
@@ -102,7 +106,7 @@ plot(f_th,A_th/2,'r+')
 hold on;
 plot((freq(MaxIdxMP)),MaxMP,'bo')
 for num=1:length(f_th)
-    hold on;
+   hold on;
    line([f_th(num) f_th(num)], [0 A_th(num)/2], 'Color','r','LineStyle','--') 
 end
 xlim([28 40])
@@ -112,14 +116,16 @@ ylabel('amplitude')
 subplot(2,1,2)
 plot(t,W*a,'+')
 suptitle('Matching Pursuit (pre-whitening) algorithm')
-set(gcf, 'PaperUnits', 'points');
-set(gcf, 'PaperPosition', [0 0 900 450]);
-saveas(gcf,'../images/mp.png')
+if SAVEDATA
+    set(gcf, 'PaperUnits', 'points');
+    set(gcf, 'PaperPosition', [0 0 900 450]);
+    saveas(gcf,'../images/mp.png')
+end
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 3.2 Orthogonal Matching Pursuit Algorithm
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 r_n = x_n;
 Gamma0 = [];
 W_g = [];
@@ -171,16 +177,18 @@ plot(t,W*a_plot,'+')
 xlabel('time')
 ylabel('amplitude')
 suptitle('Orthogonal Matching Pursuit algorithm');
-set(gcf, 'PaperUnits', 'points');
-set(gcf, 'PaperPosition', [0 0 900 450]);
-saveas(gcf,'../images/omp.png')
+if SAVEDATA
+    set(gcf, 'PaperUnits', 'points');
+    set(gcf, 'PaperPosition', [0 0 900 450]);
+    saveas(gcf,'../images/omp.png')
+end
 
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 3.3 Orthogonal Least Square
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 r_n = x_n;
 Gamma0 = [];
 W_g = [];
@@ -233,14 +241,16 @@ plot(t,W*a_plot,'+')
 xlabel('time')
 ylabel('amplitude')
 suptitle('Orthogonal Least Square');
-set(gcf, 'PaperUnits', 'points');
-set(gcf, 'PaperPosition', [0 0 900 450]);
-saveas(gcf,'../images/ols.png')
+if SAVEDATA
+    set(gcf, 'PaperUnits', 'points');
+    set(gcf, 'PaperPosition', [0 0 900 450]);
+    saveas(gcf,'../images/ols.png')
+end
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 4 Sparse representation with convex relation
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 lambda_max = max(abs(W'*x_n));
 lambda = 0.06 * lambda_max;
 n_it_max = 100000;
@@ -269,21 +279,24 @@ plot(t,W*a1,'+')
 xlabel('time')
 ylabel('amplitude')
 suptitle('Sparse representation with convex relaxation');
-set(gcf, 'PaperUnits', 'points');
-set(gcf, 'PaperPosition', [0 0 900 450]);
-saveas(gcf,'../images/convex.png')
+if SAVEDATA
+    set(gcf, 'PaperUnits', 'points');
+    set(gcf, 'PaperPosition', [0 0 900 450]);
+    saveas(gcf,'../images/convex.png')
+end
 
 % Save detected data to file:
-fileID = fopen('../images/img_data.txt','w');
-fprintf(fileID, 'frequency ; amplitude\n ');
-fprintf(fileID, '# Matching Pursuit, %d iterations\n', (MethodOneIterations(2)));
-fprintf(fileID, [repmat(' %0.3f ; %0.3f \n', 1, length(MaxIdxMP))] , [ freq(MaxIdxMP).' MaxMP].');
-fprintf(fileID, '# Orthogonal Matching Pursuit, %d iterations\n', (MethodTwoIterations(2)));
-fprintf(fileID, [repmat(' %0.3f ; %0.3f \n', 1, length(MaxIdxOMP))] , [ freq(MaxIdxOMP).' MaxOMP].');
-fprintf(fileID, '# Orthogonal Least Square, %d iterations\n', (MethodThrIterations(1)));
-fprintf(fileID, [repmat(' %0.3f ; %0.3f \n', 1, length(MaxIdxOLS))] , [ freq(MaxIdxOLS).' MaxOLS].');
-fprintf(fileID, '# Convex Relaxation\n');
-fprintf(fileID, [repmat(' %0.3f ; %0.3f \n', 1, length(MaxIdxSparse))] , [ freq(MaxIdxSparse).' MaxSparse].');
-
-fclose(fileID);
+if SAVEDATA
+    fileID = fopen('../images/img_data.txt','w');
+    fprintf(fileID, 'frequency ; amplitude\n ');
+    fprintf(fileID, '# Matching Pursuit, %d iterations\n', (MethodOneIterations(2)));
+    fprintf(fileID, [repmat(' %0.3f ; %0.3f \n', 1, length(MaxIdxMP))] , [ freq(MaxIdxMP).' MaxMP].');
+    fprintf(fileID, '# Orthogonal Matching Pursuit, %d iterations\n', (MethodTwoIterations(2)));
+    fprintf(fileID, [repmat(' %0.3f ; %0.3f \n', 1, length(MaxIdxOMP))] , [ freq(MaxIdxOMP).' MaxOMP].');
+    fprintf(fileID, '# Orthogonal Least Square, %d iterations\n', (MethodThrIterations(1)));
+    fprintf(fileID, [repmat(' %0.3f ; %0.3f \n', 1, length(MaxIdxOLS))] , [ freq(MaxIdxOLS).' MaxOLS].');
+    fprintf(fileID, '# Convex Relaxation\n');
+    fprintf(fileID, [repmat(' %0.3f ; %0.3f \n', 1, length(MaxIdxSparse))] , [ freq(MaxIdxSparse).' MaxSparse].');
+    fclose(fileID);
+end
 
