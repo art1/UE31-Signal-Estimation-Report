@@ -92,7 +92,7 @@ while T > tau
     T = (norm(r_n)^2)/(sigma^2);
 end
 MethodOneIterations = size(Gamma0);
-[MaxMP,MaxIdxMP] = findpeaks(abs(a),'threshold',0.13);
+[MaxMP,MaxIdxMP] = findpeaks(abs(a),'MinPeakHeight',0.1);
 
 figure
 subplot(2,1,1)
@@ -149,7 +149,7 @@ for ind=1:length(Gamma0)
    a_plot(Gamma0(ind)) = a(ind);
 end
 MethodTwoIterations = size(Gamma0);
-[MaxOMP,MaxIdxOMP] = findpeaks(abs(a_plot),'threshold',0.1);
+[MaxOMP,MaxIdxOMP] = findpeaks(abs(a_plot),'MinPeakHeight',0.1);
 
 figure
 subplot(2,1,1)
@@ -276,11 +276,11 @@ saveas(gcf,'../images/convex.png')
 % Save detected data to file:
 fileID = fopen('../images/img_data.txt','w');
 fprintf(fileID, 'frequency ; amplitude\n ');
-fprintf(fileID, '# Matching Pursuit, %d iterations\n', length(MethodOneIterations(1)));
+fprintf(fileID, '# Matching Pursuit, %d iterations\n', (MethodOneIterations(2)));
 fprintf(fileID, [repmat(' %0.3f ; %0.3f \n', 1, length(MaxIdxMP))] , [ freq(MaxIdxMP).' MaxMP].');
-fprintf(fileID, '# Orthogonal Matching Pursuit, %d iterations\n', length(MethodTwoIterations(2)));
+fprintf(fileID, '# Orthogonal Matching Pursuit, %d iterations\n', (MethodTwoIterations(2)));
 fprintf(fileID, [repmat(' %0.3f ; %0.3f \n', 1, length(MaxIdxOMP))] , [ freq(MaxIdxOMP).' MaxOMP].');
-fprintf(fileID, '# Orthogonal Least Square, %d iterations\n', length(MethodThrIterations(1)));
+fprintf(fileID, '# Orthogonal Least Square, %d iterations\n', (MethodThrIterations(1)));
 fprintf(fileID, [repmat(' %0.3f ; %0.3f \n', 1, length(MaxIdxOLS))] , [ freq(MaxIdxOLS).' MaxOLS].');
 fprintf(fileID, '# Convex Relaxation\n');
 fprintf(fileID, [repmat(' %0.3f ; %0.3f \n', 1, length(MaxIdxSparse))] , [ freq(MaxIdxSparse).' MaxSparse].');
