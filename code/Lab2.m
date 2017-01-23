@@ -111,7 +111,7 @@ xlabel('frequency')
 ylabel('amplitude')
 subplot(2,1,2)
 plot(t,W*a,'+')
-suptitle('Matching Pursuit (pre-whitening algorithm')
+suptitle('Matching Pursuit (pre-whitening) algorithm')
 set(gcf, 'PaperUnits', 'points');
 set(gcf, 'PaperPosition', [0 0 900 450]);
 saveas(gcf,'../images/mp.png')
@@ -211,7 +211,7 @@ for ind=1:length(Gamma0)
    a_plot(Gamma0(ind)) = a_vec(ind);
 end
 MethodThrIterations = size(Gamma0);
-[MaxOLS,MaxIdxOLS] = findpeaks(abs(a_plot),'threshold',0.1);
+[MaxOLS,MaxIdxOLS] = findpeaks(abs(a_plot),'MinPeakHeight',0.1);
 
 figure
 subplot(2,1,1)
@@ -235,7 +235,7 @@ ylabel('amplitude')
 suptitle('Orthogonal Least Square');
 set(gcf, 'PaperUnits', 'points');
 set(gcf, 'PaperPosition', [0 0 900 450]);
-saveas(gcf,'../images/omp.png')
+saveas(gcf,'../images/ols.png')
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -247,7 +247,7 @@ n_it_max = 100000;
 
 a1 = min_L2_L1_0(x_n,W,lambda,n_it_max);
 
-[MaxSparse,MaxIdxSparse] = findpeaks(abs(a1),'MinPeakHeight',0.045);
+[MaxSparse,MaxIdxSparse] = findpeaks(abs(a1),'MinPeakHeight',0.03);
 
 figure
 subplot(2,1,1)
